@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 两端对齐 -->
+    <declare-styleable name="YLJustifyTextView" tools:ignore="ResourceName">
+
+        <!-- 左侧文字 -->
+
+        <attr name="leftText_YL" format="string">左侧的文字 -- 内容</attr>
+        <attr name="leftTextColor_YL" format="color">左侧的文字 -- 颜色</attr>
+        <attr name="leftTextSize_YL" format="dimension">左侧的文字 -- 大小</attr>
+        <attr name="leftTextSpacingMulti_YL" format="float">左侧的文字 -- 行间距倍数</attr>
+        <attr name="leftTextSpacingAdd_YL" format="float">左侧的文字 -- 行间距数值</attr>
+        <attr name="leftTextWidth_YL" format="dimension">
+            左侧的文字 -- 宽度
+            <enum name="match_parent_YL" value="-1" />
+            <enum name="wrap_content_YL" value="-2" />
+        </attr>
+
+        <attr name="leftTextWidthWeight_YL" format="float">左侧的文字 -- 所占比例</attr>
+
+        <!-- 右侧文字 -->
+
+        <attr name="rightText_YL" format="string">右侧的文字 -- 内容</attr>
+        <attr name="rightTextColor_YL" format="color">右侧的文字 -- 颜色</attr>
+        <attr name="rightTextSize_YL" format="dimension">右侧的文字 -- 大小</attr>
+        <attr name="rightTextSpacingMulti_YL" format="float">右侧的文字 -- 行间距倍数</attr>
+        <attr name="rightTextSpacingAdd_YL" format="float">右侧的文字 -- 行间距数值</attr>
+        <attr name="rightTextWidth_YL" format="dimension">
+            右侧的文字 -- 宽度
+            <enum name="match_parent_YL" value="-1" />
+            <enum name="wrap_content_YL" value="-2" />
+        </attr>
+
+        <attr name="rightTextWidthWeight_YL" format="float">右侧的文字 -- 所占比例</attr>
+
+
+        <!-- 上下分割线 -->
+
+        <attr name="bottomViewLineHeight_YL" format="dimension">底部ViewLine -- 高度</attr>
+        <attr name="topViewLineHeight_YL" format="dimension">顶部ViewLine -- 高度</attr>
+
+        <attr name="bottomViewLineColor_YL" format="color">底部ViewLine -- 颜色</attr>
+        <attr name="topViewLineColor_YL" format="color">顶部ViewLine -- 颜色</attr>
+
+
+        <!-- 其他属性 -->
+
+        <attr name="space" format="dimension">左右文字的间距</attr>
+        <attr name="widthWeightFlag_YL" format="integer">
+            文字宽度 -- 权重分配且控件wrap_content 时，选定一个测量标准
+            <enum name="widthWeightFlag_Left_YL" value="-1" />
+            <enum name="widthWeightFlag_Right_YL" value="-2" />
+        </attr>
+
+        <attr name="minHeight_YL" format="dimension">控件最小高度</attr>
+        <attr name="maxHeight_YL" format="dimension">控件最大高度</attr>
+
+    </declare-styleable>
+
+</resources>
