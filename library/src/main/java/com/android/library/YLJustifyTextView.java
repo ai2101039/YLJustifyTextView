@@ -261,7 +261,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
          */
         if (heightMode == View.MeasureSpec.AT_MOST || heightMode == View.MeasureSpec.UNSPECIFIED) {
             int contentHeight = Math.max(Math.max(getLeftMeasureHeight(), getRightMeasureHeight()), Math.max(drawLeft_H, drawRight_H));
-            height = (int) Math.min(Math.max(contentHeight, minHeight), maxHeight) + paddingTop + paddingBottom + drawTop_H + drawBottom_H;
+            height = (int) Math.min(Math.max(contentHeight, minHeight), maxHeight - paddingTop - paddingBottom) + paddingTop + paddingBottom + drawTop_H + drawBottom_H;
         }
 
         setMeasuredDimension(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),

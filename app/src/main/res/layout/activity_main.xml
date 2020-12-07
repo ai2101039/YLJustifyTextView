@@ -9,15 +9,17 @@
     <com.android.library.YLJustifyTextView
 
         android:layout_width="wrap_content"
+
         android:layout_height="wrap_content"
         android:background="#999"
         android:drawablePadding="5dp"
 
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:paddingTop="0dp"
+
+        app:maxHeight_YL="50dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
 
-        app:maxHeight_YL="58dp"
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -37,10 +39,12 @@
 
 
     <TextView
-        android:drawableTop="@mipmap/ic_launcher"
         android:drawablePadding="20dp"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:maxHeight="10dp"
+        android:paddingTop="30dp"
+        android:text="123"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
