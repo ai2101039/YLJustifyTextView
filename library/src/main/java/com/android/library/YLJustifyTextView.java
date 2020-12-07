@@ -293,7 +293,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
         if (leftStaticLayout != null) {
             canvas.save();
             int dx = paddingLeft + drawLeft_W;
-            int dy = (textUseHeight - leftStaticLayout.getHeight()) / 2 + paddingTop + drawTop_H;
+            int dy = Math.max((textUseHeight - leftStaticLayout.getHeight()) / 2, 0) + paddingTop + drawTop_H;
             canvas.translate(dx, dy);
             leftStaticLayout.draw(canvas);
             canvas.restore();
@@ -306,7 +306,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
             //  正常来说，右侧文字绘制的起始点是  宽度-右侧文字宽度-右侧内边距-右侧图宽
             //  但是有可能用户属性设置错误导致 绘制点会叠加在左侧区域
             float dx = Math.max(width - rightWidth - paddingRight - drawRight_W, paddingLeft + drawLeft_W + leftWidth + space);
-            int dy = (textUseHeight - rightStaticLayout.getHeight()) / 2 + paddingTop + drawTop_H;
+            int dy = Math.max((textUseHeight - rightStaticLayout.getHeight()) / 2, 0) + paddingTop + drawTop_H;
             canvas.translate(dx, dy);
             rightStaticLayout.draw(canvas);
             canvas.restore();

@@ -17,6 +17,8 @@
         android:paddingRight="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
 
+        app:maxHeight_YL="58dp"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +33,7 @@
         app:rightTextColor_YL="#DE1E28"
         app:rightTextSize_YL="14sp"
         app:rightTextSpacingMulti_YL="1.3"
-        app:rightText_YL="右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字右侧文字" />
+        app:rightText_YL="11234444444555555566666667777778888888999999911111111111" />
 
 
     <TextView
