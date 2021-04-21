@@ -18,6 +18,18 @@
 
         <attr name="leftTextWidthWeight_YL" format="float">左侧的文字 -- 所占比例</attr>
 
+        <attr name="leftTextEllipsize_YL">
+            左侧文字缩略
+            <enum name="none" value="0" />
+            <enum name="start" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="end" value="3" />
+            <enum name="marquee" value="4" />
+        </attr>
+
+        <attr name="leftTextLines_YL" format="integer" min="0">左侧文字的行数</attr>
+
+
         <!-- 右侧文字 -->
 
         <attr name="rightText_YL" format="string">右侧的文字 -- 内容</attr>
@@ -32,7 +44,17 @@
         </attr>
 
         <attr name="rightTextWidthWeight_YL" format="float">右侧的文字 -- 所占比例</attr>
+        <attr name="rightTextLines_YL" format="integer" min="0">左侧文字的行数</attr>
 
+
+        <attr name="rightTextEllipsize_YL">
+            右侧文字缩略
+            <enum name="none" value="0" />
+            <enum name="start" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="end" value="3" />
+            <enum name="marquee" value="4" />
+        </attr>
 
         <!-- 上下分割线 -->
 

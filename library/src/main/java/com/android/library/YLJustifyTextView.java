@@ -5,9 +5,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.icu.text.UFormat;
 import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -15,11 +13,9 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.FloatRange;
-import androidx.annotation.InspectableProperty;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
@@ -39,17 +35,18 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
     /*********************** 文字相关属性 ***********************/
 
     /*
-     * 左侧文字、颜色、字号、行间距 -- 倍数、行间距 -- 数值、宽度、权重比
+     * 左侧文字、颜色、文字缩略方向、行数、字号、行间距 -- 倍数、行间距 -- 数值、宽度、权重比
      */
     private String leftText;
-    private int leftColor;
+    private int leftColor, leftTextEllipsize, leftTextLines;
     private float leftSize, leftSpacingMulti, leftSpacingAdd, leftWidth, leftWidthWeight;
     /*
-     * 右侧文字、颜色、字号、行间距 -- 倍数、行间距 -- 数值、宽度、权重比
+     * 右侧文字、颜色、文字缩略方向、行数、字号、行间距 -- 倍数、行间距 -- 数值、宽度、权重比
      */
     private String rightText;
-    private int rightColor;
+    private int rightColor, rightTextEllipsize, rightTextLines;
     private float rightSize, rightSpacingMulti, rightSpacingAdd, rightWidth, rightWidthWeight;
+
 
     /*********************** 画笔相关属性 ***********************/
 
@@ -149,6 +146,8 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
         leftSpacingAdd = ta.getFloat(R.styleable.YLJustifyTextView_leftTextSpacingAdd_YL, 0F);
         leftWidth = ta.getDimension(R.styleable.YLJustifyTextView_leftTextWidth_YL, -2F);
         leftWidthWeight = ta.getFloat(R.styleable.YLJustifyTextView_leftTextWidthWeight_YL, 0F);
+        leftTextEllipsize = ta.getInt(R.styleable.YLJustifyTextView_leftTextEllipsize_YL, 0);
+        leftTextLines = ta.getInt(R.styleable.YLJustifyTextView_leftTextLines_YL, Integer.MAX_VALUE);
 
         //  右侧文字
         rightText = ta.getString(R.styleable.YLJustifyTextView_rightText_YL);
@@ -158,6 +157,9 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
         rightSpacingAdd = ta.getFloat(R.styleable.YLJustifyTextView_rightTextSpacingAdd_YL, 0F);
         rightWidth = ta.getDimension(R.styleable.YLJustifyTextView_rightTextWidth_YL, -1F);
         rightWidthWeight = ta.getFloat(R.styleable.YLJustifyTextView_rightTextWidthWeight_YL, 0F);
+        rightTextEllipsize = ta.getInt(R.styleable.YLJustifyTextView_rightTextEllipsize_YL, 0);
+        rightTextLines = ta.getInt(R.styleable.YLJustifyTextView_rightTextLines_YL, Integer.MAX_VALUE);
+
 
         //  ViewLine
         topViewLineHeight = ta.getDimension(R.styleable.YLJustifyTextView_topViewLineHeight_YL, 0F);
@@ -293,7 +295,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
         if (leftStaticLayout != null) {
             canvas.save();
             int dx = paddingLeft + drawLeft_W;
-            int dy = Math.max((textUseHeight - leftStaticLayout.getHeight()) / 2, 0) + paddingTop + drawTop_H;
+            int dy = Math.max((textUseHeight - getLeftMeasureHeight()) / 2, 0) + paddingTop + drawTop_H;
             canvas.translate(dx, dy);
             leftStaticLayout.draw(canvas);
             canvas.restore();
@@ -306,7 +308,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
             //  正常来说，右侧文字绘制的起始点是  宽度-右侧文字宽度-右侧内边距-右侧图宽
             //  但是有可能用户属性设置错误导致 绘制点会叠加在左侧区域
             float dx = Math.max(width - rightWidth - paddingRight - drawRight_W, paddingLeft + drawLeft_W + leftWidth + space);
-            int dy = Math.max((textUseHeight - rightStaticLayout.getHeight()) / 2, 0) + paddingTop + drawTop_H;
+            int dy = Math.max((textUseHeight - getRightMeasureHeight()) / 2, 0) + paddingTop + drawTop_H;
             canvas.translate(dx, dy);
             rightStaticLayout.draw(canvas);
             canvas.restore();
@@ -467,14 +469,41 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
                                          @IntRange(from = 0) int end, @NonNull TextPaint paint,
                                          @IntRange(from = 0) int width,
                                          Layout.Alignment align,
-                                         @FloatRange(from = 1.0) float spacingMulti, @FloatRange(from = 0.0) float spacingAdd) {
+                                         @FloatRange(from = 1.0) float spacingMulti, @FloatRange(from = 0.0) float spacingAdd,
+                                         int ellipsize, int lines) {
+
+
+        TextUtils.TruncateAt ellipsize_u;
+
+        switch (ellipsize) {
+            case 1:
+                ellipsize_u = TextUtils.TruncateAt.START;
+                break;
+            case 2:
+                ellipsize_u = TextUtils.TruncateAt.MIDDLE;
+                break;
+            case 3:
+                ellipsize_u = TextUtils.TruncateAt.END;
+                break;
+            case 4:
+                ellipsize_u = TextUtils.TruncateAt.MARQUEE;
+                break;
+            default:
+                ellipsize_u = null;
+        }
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            StaticLayout.Builder builder = StaticLayout.Builder.obtain(source, start, end, paint, width);
-            builder.setAlignment(align);
-            builder.setLineSpacing(spacingAdd, spacingMulti);
+            StaticLayout.Builder builder = StaticLayout.Builder.obtain(source, start, end, paint, width)
+                    .setAlignment(align)
+                    .setLineSpacing(spacingAdd, spacingMulti)
+                    .setMaxLines(lines);
+            if (ellipsize_u != null) {
+                builder.setEllipsize(ellipsize_u).setEllipsizedWidth(width);
+            }
             return builder.build();
         } else {
-            return new StaticLayout(source, start, end, paint, width, align, spacingMulti, spacingAdd, false);
+            return new StaticLayout(source, start, end, paint, width, align, spacingMulti, spacingAdd, false, ellipsize_u, width);
         }
     }
 
@@ -484,17 +513,17 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
      */
     private int getLeftMeasureHeight() {
         StaticLayout leftStaticLayout = getLeftStaticLayout();
-        return leftStaticLayout == null ? 0 : leftStaticLayout.getHeight();
+        return leftStaticLayout == null ? 0 : (leftStaticLayout.getLineCount() > leftTextLines ? leftStaticLayout.getLineTop(leftTextLines) : leftStaticLayout.getHeight());
     }
 
     private int getRightMeasureHeight() {
         StaticLayout rightStaticLayout = getRightStaticLayout();
-        return rightStaticLayout == null ? 0 : rightStaticLayout.getHeight();
+        return rightStaticLayout == null ? 0 : (rightStaticLayout.getLineCount() > rightTextLines ? rightStaticLayout.getLineTop(rightTextLines) : rightStaticLayout.getHeight());
     }
 
     private StaticLayout getLeftStaticLayout() {
         if (!TextUtils.isEmpty(leftText)) {
-            return getStaticLayout(leftText, 0, leftText.length(), leftPaint, (int) leftWidth, Layout.Alignment.ALIGN_NORMAL, leftSpacingMulti, leftSpacingAdd);
+            return getStaticLayout(leftText, 0, leftText.length(), leftPaint, (int) leftWidth, Layout.Alignment.ALIGN_NORMAL, leftSpacingMulti, leftSpacingAdd, leftTextEllipsize, leftTextLines);
         } else {
             return null;
         }
@@ -502,7 +531,7 @@ public class YLJustifyTextView extends androidx.appcompat.widget.AppCompatTextVi
 
     private StaticLayout getRightStaticLayout() {
         if (!TextUtils.isEmpty(rightText)) {
-            return getStaticLayout(rightText, 0, rightText.length(), rightPaint, (int) rightWidth, Layout.Alignment.ALIGN_OPPOSITE, rightSpacingMulti, rightSpacingAdd);
+            return getStaticLayout(rightText, 0, rightText.length(), rightPaint, (int) rightWidth, Layout.Alignment.ALIGN_NORMAL, rightSpacingMulti, rightSpacingAdd, rightTextEllipsize, rightTextLines);
         } else {
             return null;
         }
